@@ -96,27 +96,3 @@ unsigned char* decode_z85p(const unsigned char* z85bytes, size_t z85_len, size_t
     *out_len = idx;
     return out;
 }
-
-int main() {
-    // Example usage of encode_z85p and decode_z85p
-    const char* data = "Hello, World!";
-    size_t encoded_len;
-    unsigned char* encoded = encode_z85p((unsigned char*)data, strlen(data), &encoded_len);
-    if (encoded) {
-        printf("Encoded: ");
-        for (size_t i = 0; i < encoded_len; i++) {
-            printf("%c", encoded[i]);
-        }
-        printf("\n");
-
-        size_t decoded_len;
-        unsigned char* decoded = decode_z85p(encoded, encoded_len, &decoded_len);
-        if (decoded) {
-            printf("Decoded: %.*s\n", (int)decoded_len, decoded);
-            free(decoded);
-        }
-        free(encoded);
-    }
-
-    return 0;
-}

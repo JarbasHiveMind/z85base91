@@ -147,26 +147,27 @@ class Z85B:
             cls.lib.free(decoded_data)
 
 
-
 if __name__ == "__main__":
     from hivemind_bus_client.encodings import Z85B as Z85Bpy, B91 as B91py, Z85P as Z85Ppy
 
-    def test_b91():
+
+    def test_b91(s=b"Hello, Base91!"):
         # Example usage:
         try:
-            encoded = B91py.encode(b"Hello, Base91!")
+            encoded = B91py.encode(s)
             print("Encoded py:", encoded)
             decoded = B91py.decode(encoded)
             print("Decoded py:", decoded)
 
-            encoded = B91.encode(b"Hello, Base91!")
+            encoded = B91.encode(s)
             print("Encoded:", encoded)
             decoded = B91.decode(encoded)
             print("Decoded:", decoded)
         except Exception as e:
             print(f"Error: {e}")
 
-    def test_z85b(s=b"Hello, Z85b!"):
+
+    def test_z85b(s=b"Hello, Z85B!"):
         try:
             encoded = Z85Bpy.encode(s)
             print("Encoded py:", encoded)
@@ -179,6 +180,7 @@ if __name__ == "__main__":
             print("Decoded:", decoded)
         except Exception as e:
             print(f"Error: {e}")
+
 
     def test_z85p(s=b"Hello, Z85P!"):
         try:
@@ -195,8 +197,6 @@ if __name__ == "__main__":
             print(f"Error: {e}")
 
 
-    for t in [
-        b"Hello, Z85b!",  # works
-        b"cS4z85mI5C" # failure example
-    ]:
-        test_z85b(t)
+    test_b91()
+    test_z85p()
+    test_z85b()

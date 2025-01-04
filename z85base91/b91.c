@@ -100,33 +100,3 @@ char* encode(const unsigned char* data, size_t data_len, size_t* output_len) {
     *output_len = out_idx;
     return out;
 }
-
-int main() {
-    // Initialize decode table
-    initialize_decode_table();
-
-    // Example test encoding and decoding
-    const char* encoded_str = "Base91StringHere";
-    size_t decoded_len;
-    unsigned char* decoded_data = decode(encoded_str, &decoded_len);
-
-    if (decoded_data) {
-        printf("Decoded data length: %zu\n", decoded_len);
-        free(decoded_data);
-    } else {
-        printf("Invalid Base91 string\n");
-    }
-
-    unsigned char data[] = "Hello, Base91!";
-    size_t encoded_len;
-    char* encoded_data = encode(data, strlen((char*)data), &encoded_len);
-
-    if (encoded_data) {
-        printf("Encoded data: %s\n", encoded_data);
-        free(encoded_data);
-    } else {
-        printf("Encoding failed\n");
-    }
-
-    return 0;
-}
