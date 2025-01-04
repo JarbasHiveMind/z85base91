@@ -4,7 +4,8 @@
 # $ gcc -shared -o libbase91.so -fPIC b91.c
 
 import ctypes
-from ctypes import c_char_p, c_void_p, c_size_t, POINTER
+from ctypes import c_char_p, c_void_p, c_size_t, c_ubyte, byref, POINTER
+from typing import Union
 
 
 class Z85P:
@@ -37,42 +38,6 @@ class Z85P:
         return bytes(ctypes.string_at(decoded_data, out_len.value))
 
 
-class Z85B:
-    # Load the shared library
-    lib = ctypes.CDLL('./libz85b.so')  # On Windows, use './z85b.dll'
-
-    # Define the encode function prototype
-    lib.encode_z85b.argtypes = [ctypes.POINTER(ctypes.c_ubyte), c_size_t, ctypes.POINTER(c_size_t)]
-    lib.encode_z85b.restype = ctypes.POINTER(ctypes.c_ubyte)
-
-    # Define the decode function prototype
-    lib.decode_z85b.argtypes = [ctypes.POINTER(ctypes.c_ubyte), c_size_t, ctypes.POINTER(c_size_t)]
-    lib.decode_z85b.restype = ctypes.POINTER(ctypes.c_ubyte)
-
-    @classmethod
-    def encode(cls, data: bytes):
-        output_len = c_size_t(0)
-        # Call the C function
-        encoded_data = cls.lib.encode_z85b((ctypes.c_ubyte * len(data))(*data), len(data), ctypes.byref(output_len))
-
-        if encoded_data:
-            return ctypes.string_at(encoded_data, output_len.value)
-        else:
-            raise ValueError("Encoding failed")
-
-    @classmethod
-    def decode(cls, encoded_data: bytes):
-        output_len = c_size_t(0)
-        # Call the C function
-        decoded_data = cls.lib.decode_z85b((ctypes.c_ubyte * len(encoded_data))(*encoded_data), len(encoded_data),
-                                           ctypes.byref(output_len))
-
-        if decoded_data:
-            return ctypes.string_at(decoded_data, output_len.value)
-        else:
-            raise ValueError("Decoding failed")
-
-
 class B91:
     # Load the shared library
     lib = ctypes.CDLL('./libbase91.so')  # On Windows, use './base91.dll'
@@ -89,13 +54,14 @@ class B91:
     lib.encode.restype = c_char_p
 
     @classmethod
-    def decode(cls, encoded_data: str):
-        # Convert the encoded data to bytes
-        encoded_bytes = encoded_data.encode('utf-8')
+    def decode(cls, encoded_data: Union[str, bytes]):
+        if isinstance(encoded_data, str):
+            # Convert the encoded data to bytes
+            encoded_data = encoded_data.encode('utf-8')
         output_len = c_size_t(0)
 
         # Call the C function
-        decoded_data = cls.lib.decode(encoded_bytes, ctypes.byref(output_len))
+        decoded_data = cls.lib.decode(encoded_data, ctypes.byref(output_len))
 
         if decoded_data:
             return ctypes.string_at(decoded_data, output_len.value)
@@ -103,43 +69,134 @@ class B91:
             raise ValueError("Invalid Base91 string")
 
     @classmethod
-    def encode(cls, data: bytes):
+    def encode(cls, data: Union[str, bytes]):
+        if isinstance(data, str):
+            # Convert the data to bytes
+            data = data.encode('utf-8')
         output_len = c_size_t(0)
 
         # Call the C function
         encoded_data = cls.lib.encode((ctypes.c_ubyte * len(data))(*data), len(data), ctypes.byref(output_len))
 
         if encoded_data:
-            return ctypes.string_at(encoded_data, output_len.value).decode('utf-8')
+            return ctypes.string_at(encoded_data, output_len.value)
         else:
             raise ValueError("Encoding failed")
 
 
+class Z85B:
+    # Load the shared library dynamically
+    lib = ctypes.CDLL('./libz85b.so')  # Update path as needed
+
+    # Define function prototypes
+    lib.encode_z85b.argtypes = [POINTER(c_ubyte), c_size_t, POINTER(c_size_t)]
+    lib.encode_z85b.restype = POINTER(c_ubyte)
+
+    lib.decode_z85b.argtypes = [POINTER(c_ubyte), c_size_t, POINTER(c_size_t)]
+    lib.decode_z85b.restype = POINTER(c_ubyte)
+
+    lib.free.argtypes = [ctypes.c_void_p]  # Add free function for memory cleanup
+
+    @classmethod
+    def encode(cls, data: bytes) -> bytes:
+        """
+        Encode raw bytes into Z85b format.
+
+        Args:
+            data (bytes): Input data to encode.
+
+        Returns:
+            bytes: Z85b-encoded data.
+
+        Raises:
+            ValueError: If encoding fails.
+        """
+        output_len = c_size_t(0)
+        encoded_data = cls.lib.encode_z85b((c_ubyte * len(data))(*data), len(data), byref(output_len))
+        if not encoded_data:
+            raise ValueError("Encoding failed")
+
+        try:
+            return ctypes.string_at(encoded_data, output_len.value)
+        finally:
+            cls.lib.free(encoded_data)
+
+    @classmethod
+    def decode(cls, encoded_data: bytes) -> bytes:
+        """
+        Decode Z85b-encoded bytes into raw bytes.
+
+        Args:
+            encoded_data (bytes): Z85b-encoded input.
+
+        Returns:
+            bytes: Decoded raw bytes.
+
+        Raises:
+            ValueError: If decoding fails.
+        """
+        output_len = c_size_t(0)
+        decoded_data = cls.lib.decode_z85b((c_ubyte * len(encoded_data))(*encoded_data), len(encoded_data),
+                                           byref(output_len))
+        if not decoded_data:
+            raise ValueError("Decoding failed")
+
+        try:
+            return ctypes.string_at(decoded_data, output_len.value)
+        finally:
+            cls.lib.free(decoded_data)
+
+
+
 if __name__ == "__main__":
-    # Example usage:
-    try:
-        encoded = B91.encode(b"Hello, Base91!")
-        print("Encoded:", encoded)
+    from hivemind_bus_client.encodings import Z85B as Z85Bpy, B91 as B91py, Z85P as Z85Ppy
 
-        decoded = B91.decode(encoded)
-        print("Decoded:", decoded)
-    except Exception as e:
-        print(f"Error: {e}")
+    def test_b91():
+        # Example usage:
+        try:
+            encoded = B91py.encode(b"Hello, Base91!")
+            print("Encoded py:", encoded)
+            decoded = B91py.decode(encoded)
+            print("Decoded py:", decoded)
 
-    try:
-        encoded = Z85B.encode(b"Hello, Z85b!")
-        print("Encoded:", encoded)
+            encoded = B91.encode(b"Hello, Base91!")
+            print("Encoded:", encoded)
+            decoded = B91.decode(encoded)
+            print("Decoded:", decoded)
+        except Exception as e:
+            print(f"Error: {e}")
 
-        decoded = Z85B.decode(encoded)
-        print("Decoded:", decoded)
-    except Exception as e:
-        print(f"Error: {e}")
+    def test_z85b(s=b"Hello, Z85b!"):
+        try:
+            encoded = Z85Bpy.encode(s)
+            print("Encoded py:", encoded)
+            decoded = Z85Bpy.decode(encoded)
+            print("Decoded py:", decoded)
 
-    try:
-        encoded = Z85P.encode(b"Hello, Z85P!")
-        print(f"Encoded: {encoded}")
+            encoded = Z85B.encode(s)
+            print("Encoded:", encoded)
+            decoded = Z85B.decode(encoded)
+            print("Decoded:", decoded)
+        except Exception as e:
+            print(f"Error: {e}")
 
-        decoded = Z85P.decode(encoded)
-        print(f"Decoded: {decoded.decode('utf-8')}")
-    except Exception as e:
-        print(f"Error: {e}")
+    def test_z85p(s=b"Hello, Z85P!"):
+        try:
+            encoded = Z85Ppy.encode(s)
+            print(f"Encoded py: {encoded}")
+            decoded = Z85Ppy.decode(encoded)
+            print(f"Decoded py: {decoded.decode('utf-8')}")
+
+            encoded = Z85P.encode(s)
+            print(f"Encoded: {encoded}")
+            decoded = Z85P.decode(encoded)
+            print(f"Decoded: {decoded.decode('utf-8')}")
+        except Exception as e:
+            print(f"Error: {e}")
+
+
+    for t in [
+        b"Hello, Z85b!",  # works
+        b"cS4z85mI5C" # failure example
+    ]:
+        test_z85b(t)
