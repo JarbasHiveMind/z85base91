@@ -1,12 +1,12 @@
 # Changelog
 
-## [0.0.2a1](https://github.com/JarbasHiveMind/zbase/tree/0.0.2a1) (2025-01-08)
+## [0.0.5a1](https://github.com/JarbasHiveMind/z85base91/tree/0.0.5a1) (2025-01-08)
 
-[Full Changelog](https://github.com/JarbasHiveMind/zbase/compare/0fdd72f8fabf260751b7f97770d43e83b156062d...0.0.2a1)
+[Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.4...0.0.5a1)
 
 **Merged pull requests:**
 
-- pkg [\#1](https://github.com/JarbasHiveMind/zbase/pull/1) ([JarbasAl](https://github.com/JarbasAl))
+- fix:unittests [\#2](https://github.com/JarbasHiveMind/z85base91/pull/2) ([JarbasAl](https://github.com/JarbasAl))
 
 
 
