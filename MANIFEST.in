@@ -1,2 +1,2 @@
 # MANIFEST.in
-include z85base91/*
+include zbase/*
