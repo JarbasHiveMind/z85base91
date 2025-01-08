@@ -97,7 +97,7 @@ try:
             return bytes(ctypes.string_at(decoded_data, out_len.value))
 except Exception as e:
     logging.warning(f"Z85P C library not available: {e}. Falling back to pure Python implementation.")
-    from .z85p import Z85P
+    from z85base91.z85p import Z85P
 
 try:
     class B91:
@@ -172,7 +172,7 @@ try:
             return ctypes.string_at(encoded_data, output_len.value)
 except Exception as e:
     logging.warning(f"Base91 C library not available: {e}. Falling back to pure Python implementation.")
-    from .b91 import B91
+    from z85base91.b91 import B91
 
 try:
     class Z85B:
@@ -242,13 +242,13 @@ try:
                 cls.lib.free(decoded_data)
 except Exception as e:
     logging.warning(f"Z85B C library not available: {e}. Falling back to pure Python implementation.")
-    from .z85b import Z85B
+    from z85base91.z85b import Z85B
 
 if __name__ == "__main__":
 
-    from zbase.b91 import B91 as B91py
-    from zbase.z85b import Z85B as Z85Bpy
-    from zbase.z85p import Z85P as Z85Ppy
+    from z85base91.b91 import B91 as B91py
+    from z85base91.z85b import Z85B as Z85Bpy
+    from z85base91.z85p import Z85P as Z85Ppy
 
 
     def test_b91(s=b"Hello, Base91!"):

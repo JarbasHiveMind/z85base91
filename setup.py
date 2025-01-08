@@ -6,7 +6,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 def get_version():
     """ Find the version of the package"""
-    version_file = os.path.join(BASEDIR, 'zbase', 'version.py')
+    version_file = os.path.join(BASEDIR, 'z85base91', 'version.py')
     major, minor, build, alpha = (None, None, None, None)
     with open(version_file) as f:
         for line in f:
@@ -38,10 +38,10 @@ def required(requirements_file):
 
 
 setup(
-    name='zbase',
+    name='z85base91',
     version=get_version(),
-    packages=['zbase'],
-    url='https://github.com/JarbasHiveMind/zbase',
+    packages=['z85base91'],
+    url='https://github.com/JarbasHiveMind/z85base91',
     license='Apache-2.0',
     author='jarbasAi',
     include_package_data=True,

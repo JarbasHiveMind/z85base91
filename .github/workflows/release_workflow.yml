@@ -12,7 +12,7 @@ jobs:
     secrets: inherit
     with:
       branch: 'dev'
-      version_file: 'zbase/version.py'
+      version_file: 'z85base91/version.py'
       setup_py: 'setup.py'
       update_changelog: true
       publish_prerelease: true
