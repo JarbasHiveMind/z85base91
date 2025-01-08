@@ -55,7 +55,7 @@ try:
         lib.decode_z85p.restype = ctypes.POINTER(ctypes.c_ubyte)
 
         @classmethod
-        def encode(cls, data: bytes) -> bytes:
+        def encode(cls, data: Union[str, bytes]) -> bytes:
             """
             Encodes the input data into Z85P format.
 
@@ -68,20 +68,20 @@ try:
             Raises:
                 ValueError: If encoding fails.
             """
+            if isinstance(data, str):
+                data = data.encode('utf-8')
             out_len = c_size_t(0)
             raw_data = (ctypes.c_ubyte * len(data))(*data)
             encoded_data = cls.lib.encode_z85p(raw_data, len(data), ctypes.byref(out_len))
-            if not encoded_data:
-                raise ValueError("Encoding failed")
             return bytes(ctypes.string_at(encoded_data, out_len.value))
 
         @classmethod
-        def decode(cls, data: bytes) -> bytes:
+        def decode(cls, encoded_data: Union[str, bytes]) -> bytes:
             """
             Decodes the input Z85P-encoded data into raw bytes.
 
             Args:
-                data (bytes): The Z85P-encoded data to decode.
+                encoded_data (bytes): The Z85P-encoded data to decode.
 
             Returns:
                 bytes: The decoded raw data.
@@ -89,11 +89,11 @@ try:
             Raises:
                 ValueError: If decoding fails.
             """
+            if isinstance(encoded_data, str):
+                encoded_data = encoded_data.encode('utf-8')
             out_len = c_size_t(0)
-            raw_data = (ctypes.c_ubyte * len(data))(*data)
-            decoded_data = cls.lib.decode_z85p(raw_data, len(data), ctypes.byref(out_len))
-            if not decoded_data:
-                raise ValueError("Decoding failed")
+            raw_data = (ctypes.c_ubyte * len(encoded_data))(*encoded_data)
+            decoded_data = cls.lib.decode_z85p(raw_data, len(encoded_data), ctypes.byref(out_len))
             return bytes(ctypes.string_at(decoded_data, out_len.value))
 except Exception as e:
     logging.warning(f"Z85P C library not available: {e}. Falling back to pure Python implementation.")
@@ -118,6 +118,30 @@ try:
         # Define the encode function prototype
         lib.encode.argtypes = [ctypes.POINTER(ctypes.c_ubyte), c_size_t, ctypes.POINTER(c_size_t)]
         lib.encode.restype = c_char_p
+
+        @classmethod
+        def encode(cls, data: Union[str, bytes]) -> bytes:
+            """
+            Encodes the input data into Base91 format.
+
+            Args:
+                data (Union[str, bytes]): The raw data to encode.
+
+            Returns:
+                bytes: The Base91-encoded data.
+
+            Raises:
+                ValueError: If encoding fails.
+            """
+            if isinstance(data, str):
+                # Convert the data to bytes
+                data = data.encode('utf-8')
+            output_len = c_size_t(0)
+
+            # Call the C function
+            encoded_data = cls.lib.encode((ctypes.c_ubyte * len(data))(*data), len(data), ctypes.byref(output_len))
+
+            return ctypes.string_at(encoded_data, output_len.value)
 
         @classmethod
         def decode(cls, encoded_data: Union[str, bytes]) -> bytes:
@@ -145,31 +169,6 @@ try:
                 raise ValueError("Invalid Base91 string")
             return ctypes.string_at(decoded_data, output_len.value)
 
-        @classmethod
-        def encode(cls, data: Union[str, bytes]) -> bytes:
-            """
-            Encodes the input data into Base91 format.
-
-            Args:
-                data (Union[str, bytes]): The raw data to encode.
-
-            Returns:
-                bytes: The Base91-encoded data.
-
-            Raises:
-                ValueError: If encoding fails.
-            """
-            if isinstance(data, str):
-                # Convert the data to bytes
-                data = data.encode('utf-8')
-            output_len = c_size_t(0)
-
-            # Call the C function
-            encoded_data = cls.lib.encode((ctypes.c_ubyte * len(data))(*data), len(data), ctypes.byref(output_len))
-
-            if not encoded_data:
-                raise ValueError("Encoding failed")
-            return ctypes.string_at(encoded_data, output_len.value)
 except Exception as e:
     logging.warning(f"Base91 C library not available: {e}. Falling back to pure Python implementation.")
     from z85base91.b91 import B91
@@ -193,7 +192,7 @@ try:
         lib.free.argtypes = [ctypes.c_void_p]  # Add free function for memory cleanup
 
         @classmethod
-        def encode(cls, data: bytes) -> bytes:
+        def encode(cls, data: Union[str, bytes]) -> bytes:
             """
             Encodes the input data into Z85B format.
 
@@ -206,6 +205,8 @@ try:
             Raises:
                 ValueError: If encoding fails.
             """
+            if isinstance(data, str):
+                data = data.encode('utf-8')
             output_len = c_size_t(0)
             encoded_data = cls.lib.encode_z85b((c_ubyte * len(data))(*data), len(data), byref(output_len))
             if not encoded_data:
@@ -217,7 +218,7 @@ try:
                 cls.lib.free(encoded_data)
 
         @classmethod
-        def decode(cls, encoded_data: bytes) -> bytes:
+        def decode(cls, encoded_data: Union[str, bytes]) -> bytes:
             """
             Decodes the input Z85B-encoded data into raw bytes.
 
@@ -230,6 +231,9 @@ try:
             Raises:
                 ValueError: If decoding fails.
             """
+            if isinstance(encoded_data, str):
+                # Convert the encoded data to bytes
+                encoded_data = encoded_data.encode('utf-8')
             output_len = c_size_t(0)
             decoded_data = cls.lib.decode_z85b((c_ubyte * len(encoded_data))(*encoded_data), len(encoded_data),
                                                byref(output_len))
