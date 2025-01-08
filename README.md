@@ -1,4 +1,4 @@
-# Zbase - Base91 and Z85 Encodings
+# Z85base91 - Base91 and Z85 Encodings
 
 This repository provides C and Python implementations of three encoding schemes: **Z85P**, **Base91**, and **Z85B**.
 
