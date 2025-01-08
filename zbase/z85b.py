@@ -16,8 +16,6 @@ import re
 import struct
 from typing import Union
 
-from hivemind_bus_client.exceptions import Z85DecodeError
-
 
 class Z85B:
     # Z85CHARS is the base 85 symbol table
@@ -96,7 +94,7 @@ class Z85B:
                 except IndexError:
                     break  # End of input reached
                 except KeyError as e:
-                    raise Z85DecodeError(f"Invalid byte code: {e.args[0]!r}")
+                    raise ValueError(f"Invalid byte code: {e.args[0]!r}")
             values.append(value)
 
         # Unpack the values back into raw bytes
