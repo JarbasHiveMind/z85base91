@@ -40,6 +40,8 @@ try:
         Class for encoding and decoding Z85P format using a C-based shared library.
         If the C library is not available, it falls back to a pure Python implementation.
         """
+        Z85CHARS = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#"
+
         # Load the correct shared library based on system architecture
         lib = ctypes.CDLL(get_arch_lib('libz85p'))
 
@@ -70,6 +72,7 @@ try:
             """
             if isinstance(data, str):
                 data = data.encode('utf-8')
+
             out_len = c_size_t(0)
             raw_data = (ctypes.c_ubyte * len(data))(*data)
             encoded_data = cls.lib.encode_z85p(raw_data, len(data), ctypes.byref(out_len))
@@ -90,7 +93,10 @@ try:
                 ValueError: If decoding fails.
             """
             if isinstance(encoded_data, str):
+                if any(c not in Z85P.Z85CHARS for c in encoded_data):
+                    raise ValueError("Invalid Z85 character")
                 encoded_data = encoded_data.encode('utf-8')
+
             out_len = c_size_t(0)
             raw_data = (ctypes.c_ubyte * len(encoded_data))(*encoded_data)
             decoded_data = cls.lib.decode_z85p(raw_data, len(encoded_data), ctypes.byref(out_len))
@@ -233,13 +239,12 @@ try:
             """
             if isinstance(encoded_data, str):
                 # Convert the encoded data to bytes
+                if any(c not in Z85P.Z85CHARS for c in encoded_data):
+                    raise ValueError("Invalid Z85 character")
                 encoded_data = encoded_data.encode('utf-8')
             output_len = c_size_t(0)
             decoded_data = cls.lib.decode_z85b((c_ubyte * len(encoded_data))(*encoded_data), len(encoded_data),
                                                byref(output_len))
-            if not decoded_data:
-                raise ValueError("Decoding failed")
-
             try:
                 return ctypes.string_at(decoded_data, output_len.value)
             finally:
