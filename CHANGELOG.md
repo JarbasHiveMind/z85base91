@@ -1,12 +1,12 @@
 # Changelog
 
-## [0.0.5a1](https://github.com/JarbasHiveMind/z85base91/tree/0.0.5a1) (2025-01-08)
+## [0.0.6a1](https://github.com/JarbasHiveMind/z85base91/tree/0.0.6a1) (2025-12-18)
 
-[Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.4...0.0.5a1)
+[Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.5...0.0.6a1)
 
 **Merged pull requests:**
 
-- fix:unittests [\#2](https://github.com/JarbasHiveMind/z85base91/pull/2) ([JarbasAl](https://github.com/JarbasAl))
+- Configure Renovate [\#4](https://github.com/JarbasHiveMind/z85base91/pull/4) ([renovate[bot]](https://github.com/apps/renovate))
 
 
 
