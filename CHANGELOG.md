@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.6a3](https://github.com/JarbasHiveMind/z85base91/tree/0.0.6a3) (2026-06-04)
+
+[Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.6a2...0.0.6a3)
+
+**Merged pull requests:**
+
+- Add README, CI workflows, and tests [\#13](https://github.com/JarbasHiveMind/z85base91/pull/13) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.0.6a2](https://github.com/JarbasHiveMind/z85base91/tree/0.0.6a2) (2025-12-19)
 
 [Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.6a1...0.0.6a2)
