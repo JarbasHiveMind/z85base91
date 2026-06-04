@@ -8,8 +8,10 @@ on:
 jobs:
   publish_alpha:
     if: github.event.pull_request.merged == true
-    uses: TigreGotico/gh-automations/.github/workflows/publish-alpha.yml@master
-    secrets: inherit
+    uses: OpenVoiceOS/gh-automations/.github/workflows/publish-alpha.yml@dev
+    secrets:
+      PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
+      MATRIX_TOKEN: ${{ secrets.MATRIX_TOKEN }}
     with:
       branch: 'dev'
       version_file: 'z85base91/version.py'
