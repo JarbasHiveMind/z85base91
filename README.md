@@ -31,7 +31,7 @@ from z85base91 import B91, Z85B, Z85P
 
 # Base91 (most compact)
 data = b"Hello, World!"
-encoded = B91.encode(data)        # b'>OwJh>Io0Tv!lE'
+encoded = B91.encode(data)        # b'>OwJh>}AQ;r@@Y?F'
 decoded = B91.decode(encoded)     # b'Hello, World!'
 
 # Z85B (Z85 with independent groups)
@@ -69,9 +69,9 @@ Encodes binary data using Base91, which uses 91 printable ASCII characters (A–
 
 **Example:**
 ```python
-B91.encode(b"test")           # b';AqD'
-B91.encode("test")            # b';AqD' (auto UTF-8)
-B91.encode(b"\x00\x01\x02")   # b'!#$'
+B91.encode(b"test")           # b'fPNKd'
+B91.encode("test")            # b'fPNKd' (auto UTF-8)
+B91.encode(b"\x00\x01\x02")   # b':CQA'
 ```
 
 **Decoding**
@@ -92,8 +92,8 @@ Decodes Base91-encoded input back to raw bytes.
 
 **Example:**
 ```python
-B91.decode(b'>OwJh>Io0Tv!lE')  # b'Hello, World!'
-B91.decode('>OwJh>Io0Tv!lE')   # b'Hello, World!' (str input)
+B91.decode(b'>OwJh>}AQ;r@@Y?F')  # b'Hello, World!'
+B91.decode('>OwJh>}AQ;r@@Y?F')   # b'Hello, World!' (str input)
 ```
 
 ---
@@ -119,8 +119,8 @@ Encodes binary data using Z85B, a variant of Z85 that processes 4-byte chunks in
 
 **Example:**
 ```python
-Z85B.encode(b"Hello")         # (5 bytes encodes to ~7 bytes)
-Z85B.encode("Hello")          # (str auto UTF-8)
+Z85B.encode(b"Hello")         # b'NV0&yq1' (5 bytes -> 7 bytes)
+Z85B.encode("Hello")          # b'NV0&yq1' (str auto UTF-8)
 ```
 
 **Decoding**
@@ -169,9 +169,9 @@ Encodes binary data using Z85P, a Z85 variant with an **explicit padding byte** 
 
 **Example:**
 ```python
-Z85P.encode(b"A")      # b'\x03...' (1 byte + 3 padding = 4, encodes to 5)
-Z85P.encode(b"AB")     # b'\x02...' (2 bytes + 2 padding = 4)
-Z85P.encode(b"ABCD")   # b'\x00...' (4 bytes, no padding)
+Z85P.encode(b"A")      # b'\x03k(Z(+' (1 byte + 3 padding = 4, encodes to 5)
+Z85P.encode(b"AB")     # b'\x02k%+LK' (2 bytes + 2 padding = 4)
+Z85P.encode(b"ABCD")   # b'\x00k%^}b' (4 bytes, no padding)
 ```
 
 **Decoding**
@@ -205,18 +205,21 @@ assert decoded == original
 
 The C implementations are substantially faster (~1.5x for decoding, up to 2x for encoding). The library automatically selects the C path; Python fallback engages only if compilation failed or the C library failed to load.
 
-### Benchmarks (reference)
+The package ships a benchmark harness (`z85base91/bench.py`) that compares all
+codecs against stdlib `base64`/`base32` across input sizes. It pulls in
+`click`, `tabulate`, `pybase64`, and `hivemind-bus-client` (for the pure-Python
+reference codecs), so install those before running:
 
-Measured on commodity hardware with 1000-byte inputs:
+```bash
+pip install click tabulate pybase64 hivemind-bus-client
+python -m z85base91.bench
+```
 
-| Codec | Encode Time | Decode Time | Expansion |
-|-------|-------------|-------------|-----------|
-| Base91 (C) | 622 µs | 39 µs | 1.23x |
-| Z85B (C) | 626 µs | 872 µs | 1.25x |
-| Z85P (C) | 634 µs | 776 µs | 1.28x |
-| base64 (stdlib) | 7 µs | 7 µs | 1.35x |
-
-For large payloads, Base91/Z85 trade absolute speed for size savings; the 10–20% size reduction per MB compounds on high-latency links.
+Expansion ratios are deterministic: Base91 ≈ 1.23x, Z85B ≈ 1.25x, Z85P ≈ 1.25x
+for aligned payloads (up to 1.28x for short, heavily-padded inputs), versus
+base64's 1.33x and base32's 1.6x. Absolute throughput depends on hardware; the
+C path is consistently faster than stdlib `base64` for encoding and the pure
+Python fallback for both directions.
 
 ---
 
@@ -255,7 +258,7 @@ except ValueError as e:
 If the C library fails to load, a `WARNING` is logged and the Python fallback is used transparently:
 
 ```
-2025-06-04 12:34:56,789 - WARNING - Z85P C library not available: Library load error. Falling back to pure Python implementation.
+WARNING - Z85P C library not available: Library load error. Falling back to pure Python implementation.
 ```
 
 No exception is raised; encoding/decoding work identically, just slower.
