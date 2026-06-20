@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.6a5](https://github.com/JarbasHiveMind/z85base91/tree/0.0.6a5) (2026-06-20)
+
+[Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.6a4...0.0.6a5)
+
+**Merged pull requests:**
+
+- build: migrate setup.py → pyproject.toml \(+ drop stale CI duplicates\) [\#19](https://github.com/JarbasHiveMind/z85base91/pull/19) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.0.6a4](https://github.com/JarbasHiveMind/z85base91/tree/0.0.6a4) (2026-06-05)
 
 [Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.6a3...0.0.6a4)
