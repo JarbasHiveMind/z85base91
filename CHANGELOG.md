@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.6a6](https://github.com/JarbasHiveMind/z85base91/tree/0.0.6a6) (2026-06-20)
+
+[Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.6a5...0.0.6a6)
+
+**Merged pull requests:**
+
+- ci: modernize publish workflows \(drop setup.py build\) [\#21](https://github.com/JarbasHiveMind/z85base91/pull/21) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.0.6a5](https://github.com/JarbasHiveMind/z85base91/tree/0.0.6a5) (2026-06-20)
 
 [Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.6a4...0.0.6a5)
