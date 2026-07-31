@@ -1,20 +1,20 @@
 # z85base91
 
-Compact binary-to-text encoding library providing three codecs — **Base91**, **Z85B**, and **Z85P** — for efficient serialisation of binary payloads over text-oriented channels. Combines fast C implementations with pure-Python fallbacks for cross-platform compatibility. Packaged for the HiveMind mesh.
+A binary-to-text encoding library. It provides three codecs: **Base91**, **Z85B**, and **Z85P**. Each codec turns binary data into printable ASCII text for transport over text-oriented channels, with a fast C implementation and a pure-Python fallback, so the library works on any platform. The HiveMind mesh uses it to pack binary payloads for text-mode transports.
 
 ## Why z85base91?
 
-Base64 expands data by 33% (1.33x), but **Base91 achieves only 23% overhead** (1.23x expansion) while remaining more compact than base32 (62% overhead). Z85 variants (Z85B: 1.25x, Z85P: 1.28x) offer a middle ground with character safety guarantees useful for serialising encrypted frames over websockets and other text transports.
+Base64 expands data by 33% (1.33x). Base91 expands data by only 23% (1.23x), and stays more compact than base32 (62% overhead). The Z85 variants sit between these: Z85B expands data by 1.25x, and Z85P by 1.28x. Both add character-safety guarantees useful for sending encrypted frames over websockets and other text transports.
 
 ### Comparison
 
 | Codec | Expansion | Use Case |
 |-------|-----------|----------|
-| **Base91** | 1.23x (smallest) | Maximum compactness; printable ASCII |
-| **Z85B** | 1.25x | Z85 padding scheme; per-group framing |
-| **Z85P** | 1.28x | Z85 padding scheme; prepended size byte |
-| base64 | 1.35x | Standard; less compact |
-| base32 | 1.62x | Case-insensitive; largest |
+| **Base91** | 1.23x (smallest) | Maximum compactness, printable ASCII |
+| **Z85B** | 1.25x | Z85 padding scheme, per-group framing |
+| **Z85P** | 1.28x | Z85 padding scheme, prepended size byte |
+| base64 | 1.35x | Standard, less compact |
+| base32 | 1.62x | Case-insensitive, largest |
 
 ## Installation
 
@@ -22,7 +22,7 @@ Base64 expands data by 33% (1.33x), but **Base91 achieves only 23% overhead** (1
 pip install z85base91
 ```
 
-The library bundles precompiled C extensions for x86_64, i386, and aarch64 architectures. It automatically falls back to pure Python if the C library fails to load, with a logged warning.
+The package bundles precompiled C extensions for x86_64, i386, and aarch64. If the C library fails to load, the package falls back to pure Python and logs a warning.
 
 ## Quick Start
 
@@ -43,11 +43,11 @@ encoded = Z85P.encode(data)
 decoded = Z85P.decode(encoded)
 ```
 
-All three accept `str` or `bytes` input and return `bytes`.
+All three codecs accept `str` or `bytes` input and return `bytes`.
 
 ## Public API
 
-### Base91 — `B91`
+### Base91 (`B91`)
 
 ```python
 from z85base91 import B91
@@ -59,11 +59,11 @@ from z85base91 import B91
 B91.encode(data: Union[str, bytes], encoding: str = "utf-8") -> bytes
 ```
 
-Encodes binary data using Base91, which uses 91 printable ASCII characters (A–Z, a–z, 0–9, plus 27 symbols). Achieves 1.23x size expansion.
+Encodes binary data with Base91. Base91 uses 91 printable ASCII characters (A-Z, a-z, 0-9, plus 27 symbols) and expands data by 1.23x.
 
 **Arguments:**
 - `data`: Input as `str` (encoded to UTF-8) or raw `bytes`.
-- `encoding`: Character encoding if `data` is `str`. Default: `"utf-8"`.
+- `encoding`: Character encoding to use if `data` is `str`. Default: `"utf-8"`.
 
 **Returns:** Base91-encoded bytes.
 
@@ -88,7 +88,7 @@ Decodes Base91-encoded input back to raw bytes.
 
 **Returns:** Decoded bytes.
 
-**Raises:** `ValueError` if the input contains invalid Base91 characters (outside the 91-character alphabet).
+**Raises:** `ValueError` if the input has a character outside the 91-character alphabet.
 
 **Example:**
 ```python
@@ -98,7 +98,7 @@ B91.decode('>OwJh>}AQ;r@@Y?F')   # b'Hello, World!' (str input)
 
 ---
 
-### Z85B — `Z85B`
+### Z85B (`Z85B`)
 
 ```python
 from z85base91 import Z85B
@@ -110,7 +110,7 @@ from z85base91 import Z85B
 Z85B.encode(data: Union[str, bytes]) -> bytes
 ```
 
-Encodes binary data using Z85B, a variant of Z85 that processes 4-byte chunks independently. Uses the 85-character Z85 alphabet: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#`. Achieves ~1.25x expansion.
+Encodes binary data with Z85B, a Z85 variant that processes 4-byte chunks independently. It uses the 85-character Z85 alphabet: `0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-:+=^!/*?&<>()[]{}@%$#`. Expansion is about 1.25x.
 
 **Arguments:**
 - `data`: Input as `str` (encoded to UTF-8) or raw `bytes`.
@@ -136,7 +136,7 @@ Decodes Z85B-encoded input.
 
 **Returns:** Decoded bytes.
 
-**Raises:** `ValueError` if input contains invalid Z85 characters.
+**Raises:** `ValueError` if the input has a character outside the Z85 alphabet.
 
 **Example:**
 ```python
@@ -148,7 +148,7 @@ assert decoded == original
 
 ---
 
-### Z85P — `Z85P`
+### Z85P (`Z85P`)
 
 ```python
 from z85base91 import Z85P
@@ -160,12 +160,12 @@ from z85base91 import Z85P
 Z85P.encode(data: Union[str, bytes]) -> bytes
 ```
 
-Encodes binary data using Z85P, a Z85 variant with an **explicit padding byte** prepended. The first byte of the output indicates how many padding bytes were added (0–3), allowing the decoder to strip them correctly. Uses the same 85-character Z85 alphabet as Z85B. Achieves ~1.28x expansion.
+Encodes binary data with Z85P, a Z85 variant that prepends an explicit padding byte. The first byte of the output states how many padding bytes were added (0-3), so the decoder can strip them. Z85P uses the same 85-character Z85 alphabet as Z85B. Expansion is about 1.28x.
 
 **Arguments:**
 - `data`: Input as `str` (encoded to UTF-8) or raw `bytes`.
 
-**Returns:** Z85P-encoded bytes (first byte is padding indicator, 0–3).
+**Returns:** Z85P-encoded bytes (first byte is the padding indicator, 0-3).
 
 **Example:**
 ```python
@@ -180,14 +180,14 @@ Z85P.encode(b"ABCD")   # b'\x00k%^}b' (4 bytes, no padding)
 Z85P.decode(encoded_data: Union[str, bytes]) -> bytes
 ```
 
-Decodes Z85P-encoded input, automatically stripping padding based on the first byte.
+Decodes Z85P-encoded input and strips the padding based on the first byte.
 
 **Arguments:**
 - `encoded_data`: Z85P-encoded string or bytes (must include the padding indicator byte).
 
 **Returns:** Decoded bytes with padding removed.
 
-**Raises:** `ValueError` if input length is invalid or contains invalid Z85 characters.
+**Raises:** `ValueError` if the input length is invalid or has a character outside the Z85 alphabet.
 
 **Example:**
 ```python
@@ -203,23 +203,16 @@ assert decoded == original
 
 ### C vs. Python
 
-The C implementations are substantially faster (~1.5x for decoding, up to 2x for encoding). The library automatically selects the C path; Python fallback engages only if compilation failed or the C library failed to load.
+The C implementations run substantially faster than the Python fallback (about 1.5x for decoding, up to 2x for encoding). The library selects the C path automatically. The Python fallback runs only if compilation failed or the C library failed to load.
 
-The package ships a benchmark harness (`z85base91/bench.py`) that compares all
-codecs against stdlib `base64`/`base32` across input sizes. It pulls in
-`click`, `tabulate`, `pybase64`, and `hivemind-bus-client` (for the pure-Python
-reference codecs), so install those before running:
+The package ships a benchmark harness (`z85base91/bench.py`) that compares all codecs against stdlib `base64`/`base32` across input sizes. It needs `click`, `tabulate`, `pybase64`, and [`hivemind-bus-client`](https://github.com/JarbasHiveMind/hivemind-bus-client) (for the pure-Python reference codecs), so install those before you run it:
 
 ```bash
 pip install click tabulate pybase64 hivemind-bus-client
 python -m z85base91.bench
 ```
 
-Expansion ratios are deterministic: Base91 ≈ 1.23x, Z85B ≈ 1.25x, Z85P ≈ 1.25x
-for aligned payloads (up to 1.28x for short, heavily-padded inputs), versus
-base64's 1.33x and base32's 1.6x. Absolute throughput depends on hardware; the
-C path is consistently faster than stdlib `base64` for encoding and the pure
-Python fallback for both directions.
+Expansion ratios are deterministic: Base91 is about 1.23x, Z85B about 1.25x, and Z85P about 1.25x for aligned payloads (up to 1.28x for short, heavily padded inputs), against base64's 1.33x and base32's 1.6x. Absolute throughput depends on hardware. The C path is consistently faster than stdlib `base64` for encoding, and faster than the pure Python fallback for both directions.
 
 ---
 
@@ -227,16 +220,16 @@ Python fallback for both directions.
 
 The library has three layers:
 
-1. **Public API** (`z85base91/__init__.py`): Exports `B91`, `Z85B`, `Z85P` classes. At import time, each tries to load its architecture-specific C library (`.so`) via `ctypes.CDLL`. If loading fails, the name is rebound to the pure-Python implementation.
+1. **Public API** (`z85base91/__init__.py`): exports the `B91`, `Z85B`, and `Z85P` classes. At import time, each class tries to load its architecture-specific C library (`.so`) with `ctypes.CDLL`. If loading fails, the name is rebound to the pure-Python implementation.
 
 2. **C implementations** (`src/*.c`, prebuilt as `z85base91/lib*-{arch}.so`):
-   - `libbase91-{x86_64,aarch64,i386}.so` — B91 codec
-   - `libz85b-{x86_64,aarch64,i386}.so` — Z85B codec
-   - `libz85p-{x86_64,aarch64,i386}.so` — Z85P codec
+   - `libbase91-{x86_64,aarch64,i386}.so`: B91 codec
+   - `libz85b-{x86_64,aarch64,i386}.so`: Z85B codec
+   - `libz85p-{x86_64,aarch64,i386}.so`: Z85P codec
 
-3. **Pure-Python fallbacks** (`z85base91/{b91,z85b,z85p}.py`): Self-contained reference implementations.
+3. **Pure-Python fallbacks** (`z85base91/{b91,z85b,z85p}.py`): self-contained reference implementations.
 
-Data flow: normalise input to bytes → wrap in `ctypes.c_ubyte` array → call C function → read output via `ctypes.string_at`.
+Data flow: normalize input to bytes, wrap it in a `ctypes.c_ubyte` array, call the C function, and read the output with `ctypes.string_at`.
 
 ---
 
@@ -244,40 +237,40 @@ Data flow: normalise input to bytes → wrap in `ctypes.c_ubyte` array → call 
 
 **Invalid input characters**
 
-All decoders raise `ValueError` if the input contains characters outside the allowed alphabet:
+Every decoder raises `ValueError` if the input has a character outside the allowed alphabet:
 
 ```python
 try:
-    Z85P.decode("Hello🎉World")
+    Z85P.decode("Hello€World")
 except ValueError as e:
     print(f"Invalid character: {e}")
 ```
 
 **Missing C library**
 
-If the C library fails to load, a `WARNING` is logged and the Python fallback is used transparently:
+If the C library fails to load, the package logs a `WARNING` and uses the Python fallback:
 
 ```
 WARNING - Z85P C library not available: Library load error. Falling back to pure Python implementation.
 ```
 
-No exception is raised; encoding/decoding work identically, just slower.
+No exception is raised. Encoding and decoding still work, just slower.
 
 ---
 
 ## HiveMind Integration
 
-This library is used by the HiveMind mesh to efficiently pack binary payloads (encrypted frames, keys, metadata) for transmission over websocket channels, where text-mode framing is required. The ~23% overhead (Base91) versus 33% (base64) yields measurable bandwidth savings at scale.
+The HiveMind mesh uses this library to pack binary payloads (encrypted frames, keys, metadata) for transmission over websocket channels, where text-mode framing is required. The 23% overhead of Base91, against 33% for base64, saves bandwidth at scale.
 
-Example: a 1 MB encrypted message expands to 1.23 MB (Base91) versus 1.35 MB (base64) — a 12 KB/message saving that compounds with thousands of mesh nodes.
+Example: a 1 MB encrypted message expands to 1.23 MB with Base91, against 1.35 MB with base64, a saving of about 12 KB per message that adds up across thousands of mesh nodes.
 
 ---
 
 ## Requirements
 
-**Runtime:** Python 3.8+ (no external dependencies; `ctypes` is stdlib)
+**Runtime:** Python 3.8+ (no external dependencies, `ctypes` is part of the standard library)
 
-**Build:** `python3-dev`, `swig` (for C extension compilation)
+**Build:** `python3-dev`, `swig` (to compile the C extensions)
 
 **Tests:** `pytest~=7.1`, `pytest-cov~=4.1`
 
@@ -291,7 +284,7 @@ pip install -r test/requirements.txt
 pytest test/ -q
 ```
 
-All codecs are tested for:
+The test suite covers all codecs for:
 - Round-trip encode/decode (identity)
 - Edge cases (empty input, single byte, odd lengths)
 - Invalid input handling
@@ -299,6 +292,11 @@ All codecs are tested for:
 - Large payloads (1000+ bytes)
 
 ---
+
+## Related Projects
+
+- [hivemind-websocket-client](https://github.com/JarbasHiveMind/hivemind-websocket-client): the HiveMind protocol client. Its `encodings/` module is the origin of the Base91/Z85B/Z85P codecs this library ships as a standalone, C-accelerated package.
+- [hivemind-bus-client](https://github.com/JarbasHiveMind/hivemind-bus-client): provides the pure-Python reference codecs used by the benchmark harness.
 
 ## License
 
