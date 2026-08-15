@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.0.6a8](https://github.com/JarbasHiveMind/z85base91/tree/0.0.6a8) (2026-08-15)
+
+[Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.6a7...0.0.6a8)
+
+**Merged pull requests:**
+
+- docs: add AGENTS.md with per-repo agent conventions [\#25](https://github.com/JarbasHiveMind/z85base91/pull/25) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.0.6a7](https://github.com/JarbasHiveMind/z85base91/tree/0.0.6a7) (2026-07-31)
 
 [Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.6a6...0.0.6a7)
