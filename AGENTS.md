@@ -94,11 +94,17 @@ its output format breaks every peer that decodes it.
   breaking change and needs a new codec name, not a silent edit.
   `encode(decode(x)) == x` and `decode(encode(x)) == x` must hold exactly for
   every codec, on both the C path and the pure-Python fallback, and the two
-  paths must produce byte-identical output for the same input.
-  - This is not currently tested by an automated cross-implementation
-    (C-vs-Python) or cross-architecture equivalence check in `test/` — treat
-    adding one as a real gap, not a nice-to-have, before relying on the
-    fallback path in production.
+  paths must produce byte-identical output for the same input. A codec is
+  defined by its C source and its pure-Python implementation together; a
+  committed binary that disagrees with both is a defective build of that codec,
+  not a codec of its own. Rebuild it from the source and say so in the release
+  note, naming the characters that differ; do not give the defect a name.
+  - `test/test_b91.py` checks every committed `libbase91-*.so` against the
+    alphabet in `src/b91.c`, by reading the binary rather than executing it, so
+    one machine covers all three architectures. It also runs the library that
+    actually loaded against the pure-Python codec over every byte value and
+    random inputs; that check covers only the architecture running the suite,
+    which is what makes it the one to run in place on a deployment target.
 - This is a pure encoding library, not a crypto or security boundary: there is
   no authentication, ACL, or secret-handling code here. It does not weaken any
   security check because it does not perform one — the encrypted-payload
