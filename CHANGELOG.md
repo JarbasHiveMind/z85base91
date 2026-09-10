@@ -1,12 +1,80 @@
 # Changelog
 
-## [0.0.5a1](https://github.com/JarbasHiveMind/z85base91/tree/0.0.5a1) (2025-01-08)
+## [0.0.7a1](https://github.com/JarbasHiveMind/z85base91/tree/0.0.7a1) (2026-09-10)
 
-[Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.4...0.0.5a1)
+[Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.6a8...0.0.7a1)
+
+**Closed issues:**
+
+- Shipped aarch64 and i386 base91 libraries implement an older alphabet than src/b91.c [\#27](https://github.com/JarbasHiveMind/z85base91/issues/27)
 
 **Merged pull requests:**
 
-- fix:unittests [\#2](https://github.com/JarbasHiveMind/z85base91/pull/2) ([JarbasAl](https://github.com/JarbasAl))
+- fix: rebuild the aarch64 and i386 base91 libraries from the current source [\#28](https://github.com/JarbasHiveMind/z85base91/pull/28) ([goldyfruit](https://github.com/goldyfruit))
+
+## [0.0.6a8](https://github.com/JarbasHiveMind/z85base91/tree/0.0.6a8) (2026-08-15)
+
+[Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.6a7...0.0.6a8)
+
+**Merged pull requests:**
+
+- docs: add AGENTS.md with per-repo agent conventions [\#25](https://github.com/JarbasHiveMind/z85base91/pull/25) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.0.6a7](https://github.com/JarbasHiveMind/z85base91/tree/0.0.6a7) (2026-07-31)
+
+[Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.6a6...0.0.6a7)
+
+**Merged pull requests:**
+
+- docs: rewrite README in Simplified Technical English [\#23](https://github.com/JarbasHiveMind/z85base91/pull/23) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.0.6a6](https://github.com/JarbasHiveMind/z85base91/tree/0.0.6a6) (2026-06-20)
+
+[Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.6a5...0.0.6a6)
+
+**Merged pull requests:**
+
+- ci: modernize publish workflows \(drop setup.py build\) [\#21](https://github.com/JarbasHiveMind/z85base91/pull/21) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.0.6a5](https://github.com/JarbasHiveMind/z85base91/tree/0.0.6a5) (2026-06-20)
+
+[Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.6a4...0.0.6a5)
+
+**Merged pull requests:**
+
+- build: migrate setup.py → pyproject.toml \(+ drop stale CI duplicates\) [\#19](https://github.com/JarbasHiveMind/z85base91/pull/19) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.0.6a4](https://github.com/JarbasHiveMind/z85base91/tree/0.0.6a4) (2026-06-05)
+
+[Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.6a3...0.0.6a4)
+
+**Merged pull requests:**
+
+- docs: zero-to-hero README polish [\#15](https://github.com/JarbasHiveMind/z85base91/pull/15) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.0.6a3](https://github.com/JarbasHiveMind/z85base91/tree/0.0.6a3) (2026-06-04)
+
+[Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.6a2...0.0.6a3)
+
+**Merged pull requests:**
+
+- Add README, CI workflows, and tests [\#13](https://github.com/JarbasHiveMind/z85base91/pull/13) ([JarbasAl](https://github.com/JarbasAl))
+
+## [0.0.6a2](https://github.com/JarbasHiveMind/z85base91/tree/0.0.6a2) (2025-12-19)
+
+[Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.6a1...0.0.6a2)
+
+**Merged pull requests:**
+
+- Update actions/setup-python action to v6 [\#9](https://github.com/JarbasHiveMind/z85base91/pull/9) ([renovate[bot]](https://github.com/apps/renovate))
+
+## [0.0.6a1](https://github.com/JarbasHiveMind/z85base91/tree/0.0.6a1) (2025-12-18)
+
+[Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.5...0.0.6a1)
+
+**Merged pull requests:**
+
+- Configure Renovate [\#4](https://github.com/JarbasHiveMind/z85base91/pull/4) ([renovate[bot]](https://github.com/apps/renovate))
 
 
 
