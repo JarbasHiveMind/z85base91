@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.0.7a1](https://github.com/JarbasHiveMind/z85base91/tree/0.0.7a1) (2026-09-10)
+
+[Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.6a8...0.0.7a1)
+
+**Closed issues:**
+
+- Shipped aarch64 and i386 base91 libraries implement an older alphabet than src/b91.c [\#27](https://github.com/JarbasHiveMind/z85base91/issues/27)
+
+**Merged pull requests:**
+
+- fix: rebuild the aarch64 and i386 base91 libraries from the current source [\#28](https://github.com/JarbasHiveMind/z85base91/pull/28) ([goldyfruit](https://github.com/goldyfruit))
+
 ## [0.0.6a8](https://github.com/JarbasHiveMind/z85base91/tree/0.0.6a8) (2026-08-15)
 
 [Full Changelog](https://github.com/JarbasHiveMind/z85base91/compare/0.0.6a7...0.0.6a8)
